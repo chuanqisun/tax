@@ -3,7 +3,24 @@ body {
 }
 
 table {
-  border-spacing: 8px;
+  border-spacing: 16px 4px;
+}
+
+form {
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  gap: 8px;
+
+  label {
+    text-align: right;
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+  }
+
+  button {
+    grid-column: 1 / -1;
+  }
 }
 
 th,
