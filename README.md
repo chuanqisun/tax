@@ -1,2 +1,3 @@
-# tax-calc
-Utility for US tax payers
+# Tax sheets
+
+Worksheets for US tax payers

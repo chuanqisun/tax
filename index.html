@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link rel="stylesheet" href="./style.css?v=1.0.0">
+  <script type="module" src="./main.js?v=1.0.0"></script>
+  <title>Tax sheets</title>
+</head>
+
+<body>
+
+  <form>
+    <label>
+      Taxable income
+      <input name="taxableIncome" type="number" />
+    </label>
+    <button type="submit">Calc</button>
+  </form>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Rate</th>
+        <th>Min</th>
+        <th>Max</th>
+        <th>Taxable</th>
+        <th>Tax</th>
+      </tr>
+    </thead>
+    <tbody id="worksheet">
+    </tbody>
+  </table>
+</body>

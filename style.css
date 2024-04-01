@@ -1,0 +1,18 @@
+body {
+  font-family: monospace;
+}
+
+table {
+  border-spacing: 8px;
+}
+
+th,
+tr {
+  text-align: right;
+}
+
+tbody {
+  tr[data-applicable="false"] {
+    opacity: 0.5;
+  }
+}
