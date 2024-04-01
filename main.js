@@ -27,7 +27,7 @@ function main() {
 function calc() {
   const expectedAnnualIncome = Math.max(0, rootForm.querySelector(`input[name="expectedAnnualIncome"]`).valueAsNumber);
   const incomeYtd = Math.max(0, rootForm.querySelector(`input[name="incomeYtd"]`).valueAsNumber);
-  const taxDeductedYtd = Math.max(0, rootForm.querySelector(`input[name="taxDeductedYtd"]`).valueAsNumber);
+  const taxWithheldYtd = Math.max(0, rootForm.querySelector(`input[name="taxWithheldYtd"]`).valueAsNumber);
   const estimatedTaxPaidYtd = Math.max(0, rootForm.querySelector(`input[name="estimatedTaxPaidYtd"]`).valueAsNumber);
 
   const filledBrackets = prepareBrackets(brackets2024)
@@ -53,13 +53,13 @@ function calc() {
   document.querySelector("tbody#worksheet").innerHTML = renderWorksheet(filledBrackets, summary);
 
   const taxExpectedYtd = incomeYtd * effectiveTaxRate;
-  const balanceYtd = taxExpectedYtd - taxDeductedYtd;
+  const balanceYtd = taxExpectedYtd - taxWithheldYtd;
 
   const balanceInput = {
     incomeYtd,
     effectiveTaxRate,
     taxExpectedYtd,
-    taxDeductedYtd,
+    taxWithheldYtd,
     estimatedTaxPaidYtd,
     balanceYtd,
   };
@@ -124,8 +124,8 @@ function renderBalance(input) {
     <td>${input.taxExpectedYtd.toFixed(2)}</td>
   </tr>
   <tr>
-    <th>Deducted</th>
-    <td>-${input.taxDeductedYtd.toFixed(2)}</td>
+    <th>Withheld</th>
+    <td>-${input.taxWithheldYtd.toFixed(2)}</td>
   </tr>
   <tr>
     <th>Estimated tax paid</th>
