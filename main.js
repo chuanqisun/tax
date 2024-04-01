@@ -10,25 +10,50 @@ const brackets2024 = [
 ];
 
 const rootForm = document.querySelector("form");
+restoreParams();
 calc();
 
 function main() {
   // auto summit on change
   rootForm.addEventListener("input", function (_event) {
     calc();
+
+    // store params
+    const formData = new FormData(rootForm);
+    const serialized = new URLSearchParams(formData).toString();
+    localStorage.setItem("params", serialized);
   });
 
   rootForm.addEventListener("submit", function (event) {
     event.preventDefault();
     calc();
   });
+
+  rootForm.querySelector(`button[type="reset"]`).addEventListener("click", function (event) {
+    event.preventDefault();
+    localStorage.removeItem("params");
+    rootForm.reset();
+    calc();
+  });
+}
+
+function restoreParams() {
+  const serialized = localStorage.getItem("params");
+  const deserialized = new URLSearchParams(serialized);
+  rootForm.querySelectorAll("input").forEach((input) => {
+    const name = input.getAttribute("name");
+    const value = deserialized.get(name);
+    if (value) {
+      input.value = value;
+    }
+  });
 }
 
 function calc() {
-  const expectedAnnualIncome = Math.max(0, rootForm.querySelector(`input[name="expectedAnnualIncome"]`).valueAsNumber);
-  const incomeYtd = Math.max(0, rootForm.querySelector(`input[name="incomeYtd"]`).valueAsNumber);
-  const taxWithheldYtd = Math.max(0, rootForm.querySelector(`input[name="taxWithheldYtd"]`).valueAsNumber);
-  const estimatedTaxPaidYtd = Math.max(0, rootForm.querySelector(`input[name="estimatedTaxPaidYtd"]`).valueAsNumber);
+  const expectedAnnualIncome = coerceNaNTo(0, Math.max(0, rootForm.querySelector(`input[name="expectedAnnualIncome"]`).valueAsNumber));
+  const incomeYtd = coerceNaNTo(0, Math.max(0, rootForm.querySelector(`input[name="incomeYtd"]`).valueAsNumber));
+  const taxWithheldYtd = coerceNaNTo(0, Math.max(0, rootForm.querySelector(`input[name="taxWithheldYtd"]`).valueAsNumber));
+  const estimatedTaxPaidYtd = coerceNaNTo(0, Math.max(0, rootForm.querySelector(`input[name="estimatedTaxPaidYtd"]`).valueAsNumber));
 
   const filledBrackets = prepareBrackets(brackets2024)
     .map(({ rate, min, max }) => {
@@ -47,7 +72,7 @@ function calc() {
     .slice(1);
 
   const total = filledBrackets.reduce((acc, { tax }) => acc + tax, 0);
-  const effectiveTaxRate = coerceNaN(total / expectedAnnualIncome, 0);
+  const effectiveTaxRate = coerceNaNTo(0, total / expectedAnnualIncome);
   const summary = { expectedIncome: expectedAnnualIncome, total, effectiveTaxRate };
 
   document.querySelector("tbody#worksheet").innerHTML = renderWorksheet(filledBrackets, summary);
@@ -142,8 +167,8 @@ function renderBalance(input) {
   `;
 }
 
-function coerceNaN(maybeNaN, value) {
-  return isNaN(maybeNaN) ? value : maybeNaN;
+function coerceNaNTo(coerceTo, maybeNaN) {
+  return isNaN(maybeNaN) ? coerceTo : maybeNaN;
 }
 
 main();
