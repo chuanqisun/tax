@@ -1,15 +1,8 @@
-const brackets2024 = [
-  { rate: 0, max: 0 },
-  { rate: 0.1, max: 11_600 },
-  { rate: 0.12, max: 47_150 },
-  { rate: 0.22, max: 100_525 },
-  { rate: 0.24, max: 191_950 },
-  { rate: 0.32, max: 243_725 },
-  { rate: 0.35, max: 609_350 },
-  { rate: 0.37, max: Infinity },
-];
-
+const storageKey = `params-${globalThis.year}`;
 const rootForm = document.querySelector("form");
+
+document.querySelector("h1").textContent = `Tax sheets ${globalThis.year}`;
+
 restoreParams();
 calc();
 
@@ -21,7 +14,7 @@ function main() {
     // store params
     const formData = new FormData(rootForm);
     const serialized = new URLSearchParams(formData).toString();
-    localStorage.setItem("params", serialized);
+    localStorage.setItem(storageKey, serialized);
   });
 
   rootForm.addEventListener("submit", function (event) {
@@ -31,14 +24,14 @@ function main() {
 
   rootForm.querySelector(`button[type="reset"]`).addEventListener("click", function (event) {
     event.preventDefault();
-    localStorage.removeItem("params");
+    localStorage.removeItem(storageKey);
     rootForm.reset();
     calc();
   });
 }
 
 function restoreParams() {
-  const serialized = localStorage.getItem("params");
+  const serialized = localStorage.getItem(storageKey);
   const deserialized = new URLSearchParams(serialized);
   rootForm.querySelectorAll("input").forEach((input) => {
     const name = input.getAttribute("name");
@@ -55,7 +48,7 @@ function calc() {
   const taxWithheldYtd = coerceNaNTo(0, Math.max(0, rootForm.querySelector(`input[name="taxWithheldYtd"]`).valueAsNumber));
   const estimatedTaxPaidYtd = coerceNaNTo(0, Math.max(0, rootForm.querySelector(`input[name="estimatedTaxPaidYtd"]`).valueAsNumber));
 
-  const filledBrackets = prepareBrackets(brackets2024)
+  const filledBrackets = prepareBrackets(globalThis.brackets)
     .map(({ rate, min, max }) => {
       const applicable = expectedAnnualIncome > min;
       const taxable = Math.min(max, Math.max(expectedAnnualIncome, min)) - min;
@@ -111,7 +104,7 @@ function renderWorksheet(filledBrackets, summary) {
       <td>${(rate * 100).toFixed(0)}%</td>
       <td>${min}</td>
       <td>${max}</td>
-      <td>${taxable}</td>
+      <td>${taxable.toFixed(2)}</td>
       <td>${tax.toFixed(2)}</td>
     </tr>
     `
