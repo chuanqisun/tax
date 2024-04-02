@@ -71,7 +71,7 @@ function calc() {
   document.querySelector("tbody#worksheet").innerHTML = renderWorksheet(filledBrackets, summary);
 
   const taxExpectedYtd = incomeYtd * effectiveTaxRate;
-  const balanceYtd = taxExpectedYtd - taxWithheldYtd;
+  const balanceYtd = taxExpectedYtd - taxWithheldYtd - estimatedTaxPaidYtd;
 
   const balanceInput = {
     incomeYtd,
