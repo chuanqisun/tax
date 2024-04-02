@@ -1,17 +1,16 @@
-const year = 2024;
+const year = 2023;
 const brackets = [
   { rate: 0, max: 0 },
-  { rate: 0.1, max: 11_600 },
-  { rate: 0.12, max: 47_150 },
-  { rate: 0.22, max: 100_525 },
-  { rate: 0.24, max: 191_950 },
-  { rate: 0.32, max: 243_725 },
-  { rate: 0.35, max: 609_350 },
+  { rate: 0.1, max: 11_000 },
+  { rate: 0.12, max: 44_725 },
+  { rate: 0.22, max: 95_357 },
+  { rate: 0.24, max: 182_100 },
+  { rate: 0.32, max: 231_250 },
+  { rate: 0.35, max: 578_125 },
   { rate: 0.37, max: Infinity },
 ];
 
 const storageKey = `params-${year}`;
-
 const rootForm = document.querySelector("form");
 
 restoreParams();
