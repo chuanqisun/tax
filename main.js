@@ -1,15 +1,59 @@
 const year = 2025;
-const brackets = [
-  { rate: 0, max: 0 },
-  { rate: 0.1, max: 11_925 },
-  { rate: 0.12, max: 48_475 },
-  { rate: 0.22, max: 103_350 },
-  { rate: 0.24, max: 197_300 },
-  { rate: 0.32, max: 250_525 },
-  { rate: 0.35, max: 626_350 },
-  { rate: 0.37, max: Infinity },
-];
-const standardDeduction = 15_000;
+const schedules = {
+  single: {
+    brackets: [
+      { rate: 0, max: 0 },
+      { rate: 0.1, max: 11_925 },
+      { rate: 0.12, max: 48_475 },
+      { rate: 0.22, max: 103_350 },
+      { rate: 0.24, max: 197_300 },
+      { rate: 0.32, max: 250_525 },
+      { rate: 0.35, max: 626_350 },
+      { rate: 0.37, max: Infinity },
+    ],
+    standardDeduction: 15_000,
+  },
+  "married-filing-jointly": {
+    brackets: [
+      { rate: 0, max: 0 },
+      { rate: 0.1, max: 23_850 },
+      { rate: 0.12, max: 96_950 },
+      { rate: 0.22, max: 206_700 },
+      { rate: 0.24, max: 394_600 },
+      { rate: 0.32, max: 501_050 },
+      { rate: 0.35, max: 751_600 },
+      { rate: 0.37, max: Infinity },
+    ],
+    standardDeduction: 30_000,
+  },
+  "married-filing-separately": {
+    brackets: [
+      { rate: 0, max: 0 },
+      { rate: 0.1, max: 11_925 },
+      { rate: 0.12, max: 48_475 },
+      { rate: 0.22, max: 103_350 },
+      { rate: 0.24, max: 197_300 },
+      { rate: 0.32, max: 250_525 },
+      { rate: 0.35, max: 375_800 },
+      { rate: 0.37, max: Infinity },
+    ],
+    standardDeduction: 15_000,
+  },
+  "head-of-household": {
+    brackets: [
+      { rate: 0, max: 0 },
+      { rate: 0.1, max: 17_000 },
+      { rate: 0.12, max: 64_850 },
+      { rate: 0.22, max: 103_350 },
+      { rate: 0.24, max: 197_300 },
+      { rate: 0.32, max: 250_500 },
+      { rate: 0.35, max: 626_350 },
+      { rate: 0.37, max: Infinity },
+    ],
+    standardDeduction: 22_500,
+  },
+};
+
 const storageKey = `params-${year}`;
 const rootForm = document.querySelector("form");
 
@@ -43,6 +87,8 @@ function main() {
     const action = e.target?.closest("[data-action]")?.getAttribute("data-action");
     switch (action) {
       case "apply-std-deduction": {
+        const status = rootForm.querySelector(`input[name="filingStatus"]:checked`).value;
+        const standardDeduction = schedules[status].standardDeduction;
         rootForm.querySelector(`input[name="expectedDeduction"]`).value = standardDeduction;
         calc();
         break;
@@ -58,12 +104,24 @@ function restoreParams() {
     const name = input.getAttribute("name");
     const value = deserialized.get(name);
     if (value) {
-      input.value = value;
+      switch (input.type) {
+        case "checkbox":
+          input.checked = value === "on";
+          break;
+        case "radio":
+          if (input.value === value) {
+            input.checked = true;
+          }
+          break;
+        default:
+          input.value = value;
+      }
     }
   });
 }
 
 function calc() {
+  const filingStatus = rootForm.querySelector(`input[name="filingStatus"]:checked`).value;
   const expectedAnnualIncome = coerceNaNTo(0, Math.max(0, rootForm.querySelector(`input[name="expectedAnnualIncome"]`).valueAsNumber));
   const expectedDeduction = coerceNaNTo(0, Math.max(0, rootForm.querySelector(`input[name="expectedDeduction"]`).valueAsNumber));
   const incomeYtd = coerceNaNTo(0, Math.max(0, rootForm.querySelector(`input[name="incomeYtd"]`).valueAsNumber));
@@ -71,9 +129,12 @@ function calc() {
   const estimatedTaxPaidYtd = coerceNaNTo(0, Math.max(0, rootForm.querySelector(`input[name="estimatedTaxPaidYtd"]`).valueAsNumber));
   const expectedTaxableIncome = Math.max(0, expectedAnnualIncome - expectedDeduction);
 
-  renderExpectedIncome(expectedTaxableIncome);
+  const schedule = schedules[filingStatus];
+  const standardDeduction = schedule.standardDeduction;
 
-  const filledBrackets = prepareBrackets(brackets)
+  renderInputFormValues(expectedTaxableIncome, standardDeduction);
+
+  const filledBrackets = prepareBrackets(schedule.brackets)
     .map(({ rate, min, max }) => {
       const applicable = expectedTaxableIncome > min;
       const taxable = Math.min(max, Math.max(expectedTaxableIncome, min)) - min;
@@ -120,8 +181,9 @@ function prepareBrackets(brackets = []) {
   });
 }
 
-function renderExpectedIncome(expectedTaxableIncome) {
+function renderInputFormValues(expectedTaxableIncome, standardDeduction) {
   rootForm.querySelector(`input[name="expectedTaxableIncome"]`).value = expectedTaxableIncome;
+  rootForm.querySelector(`input[name="expectedDeduction"]`).placeholder = standardDeduction;
 }
 
 function renderWorksheet(filledBrackets, summary) {

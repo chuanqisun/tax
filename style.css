@@ -19,6 +19,23 @@ form {
     grid-template-columns: subgrid;
   }
 
+  fieldset {
+    display: grid;
+    grid-column: 1 / -1;
+    gap: 8px;
+
+    input {
+      margin: 0;
+    }
+
+    label {
+      grid-column: span 1;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+  }
+
   input {
     grid-column: span 2;
   }

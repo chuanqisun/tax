@@ -12,13 +12,32 @@
     <h2>Input</h2>
     <form>
       <button type="reset">Reset</button>
+      <fieldset>
+        <legend>Filing status</legend>
+        <label>
+          <input type="radio" name="filingStatus" value="single" checked />
+          Single
+        </label>
+        <label>
+          <input type="radio" name="filingStatus" value="married-filing-jointly" />
+          Married filing jointly
+        </label>
+        <label>
+          <input type="radio" name="filingStatus" value="married-filing-separately" />
+          Married filing separately
+        </label>
+        <label>
+          <input type="radio" name="filingStatus" value="head-of-household" />
+          Head of household
+        </label>
+      </fieldset>
       <label>
         <span>Expected annual income</span>
         <input name="expectedAnnualIncome" type="number" />
       </label>
       <label>
         <span>Expected deduction </span>
-        <input name="expectedDeduction" type="number" />
+        <input name="expectedDeduction" type="number" placeholder="" />
         <button title="Apply standard deduction" type="button" data-action="apply-std-deduction">Std</button>
       </label>
       <label>
@@ -68,6 +87,11 @@
           <a href="./archive/2024/index.html">Previous year</a>
         </li>
       </ul>
+      <h2>Disclaimer</h2>
+      <p>
+        This is a hobby project and may contain calculation errors. Please consult <a href="https://www.irs.go" target="_blank">IRS official website</a> and tax
+        professionals before filing.
+      </p>
     </footer>
   </body>
 </html>
