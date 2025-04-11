@@ -14,6 +14,7 @@ form {
   label {
     text-align: right;
     display: grid;
+    align-items: start;
     grid-column: 1 / -1;
     grid-template-columns: subgrid;
   }

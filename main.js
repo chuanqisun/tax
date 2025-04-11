@@ -9,7 +9,7 @@ const brackets = [
   { rate: 0.35, max: 626_350 },
   { rate: 0.37, max: Infinity },
 ];
-const standardDeduction = 14_600;
+const standardDeduction = 15_000;
 const storageKey = `params-${year}`;
 const rootForm = document.querySelector("form");
 
