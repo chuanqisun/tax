@@ -1,7 +1,7 @@
 const year = 2025;
 const schedules = {
   single: {
-    brackets: [
+    incomeBrackets: [
       { rate: 0, max: 0 },
       { rate: 0.1, max: 11_925 },
       { rate: 0.12, max: 48_475 },
@@ -11,10 +11,15 @@ const schedules = {
       { rate: 0.35, max: 626_350 },
       { rate: 0.37, max: Infinity },
     ],
+    longTermCapitalGainBrackets: [
+      { rate: 0, max: 47_025 },
+      { rate: 0.15, max: 518_900 },
+      { rate: 0.2, max: Infinity },
+    ],
     standardDeduction: 15_000,
   },
   "married-filing-jointly": {
-    brackets: [
+    incomeBrackets: [
       { rate: 0, max: 0 },
       { rate: 0.1, max: 23_850 },
       { rate: 0.12, max: 96_950 },
@@ -24,10 +29,15 @@ const schedules = {
       { rate: 0.35, max: 751_600 },
       { rate: 0.37, max: Infinity },
     ],
+    longTermCapitalGainRates: [
+      { rate: 0, max: 94_050 },
+      { rate: 0.15, max: 583_750 },
+      { rate: 0.2, max: Infinity },
+    ],
     standardDeduction: 30_000,
   },
   "married-filing-separately": {
-    brackets: [
+    incomeBrackets: [
       { rate: 0, max: 0 },
       { rate: 0.1, max: 11_925 },
       { rate: 0.12, max: 48_475 },
@@ -37,10 +47,15 @@ const schedules = {
       { rate: 0.35, max: 375_800 },
       { rate: 0.37, max: Infinity },
     ],
+    longTermCapitalGainRates: [
+      { rate: 0, max: 47_025 },
+      { rate: 0.15, max: 291_850 },
+      { rate: 0.2, max: Infinity },
+    ],
     standardDeduction: 15_000,
   },
   "head-of-household": {
-    brackets: [
+    incomeBrackets: [
       { rate: 0, max: 0 },
       { rate: 0.1, max: 17_000 },
       { rate: 0.12, max: 64_850 },
@@ -49,6 +64,11 @@ const schedules = {
       { rate: 0.32, max: 250_500 },
       { rate: 0.35, max: 626_350 },
       { rate: 0.37, max: Infinity },
+    ],
+    longTermCapitalGainRates: [
+      { rate: 0, max: 63_000 },
+      { rate: 0.15, max: 551_350 },
+      { rate: 0.2, max: Infinity },
     ],
     standardDeduction: 22_500,
   },
@@ -142,7 +162,7 @@ function calc() {
 
   renderInputFormValues(expectedTaxableIncome, standardDeduction);
 
-  const filledBrackets = prepareBrackets(schedule.brackets)
+  const filledBrackets = prepareBrackets(schedule.incomeBrackets)
     .map(({ rate, min, max }) => {
       const applicable = expectedTaxableIncome > min;
       const taxable = Math.min(max, Math.max(expectedTaxableIncome, min)) - min;
