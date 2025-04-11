@@ -296,13 +296,13 @@ function renderBalance(input) {
   </tr>
   <tr>
     <th>Short-term capital gains</th>
-    <td>${input.shortTermCapitalGainsYtd.toFixed(2)}</td>
+    <td>+ ${input.shortTermCapitalGainsYtd.toFixed(2)}</td>
   </tr>
   <tr>
     <th colspan="2"><hr></th>
   </tr>
   <tr>
-    <th>Total taxable</th>
+    <th>Taxable income</th>
     <td>${input.totalTaxableIncomeYtd.toFixed(2)}</td>
   </tr>
   <tr>
@@ -318,7 +318,7 @@ function renderBalance(input) {
   </tr>
   <tr>
     <th>Long-term capital gain tax</th>
-    <td>${input.longTermCapitalGainTax.toFixed(2)}</td>
+    <td>+ ${input.longTermCapitalGainTax.toFixed(2)}</td>
   </tr>
   <tr>
     <th colspan="2"><hr></th>

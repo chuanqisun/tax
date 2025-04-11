@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <link rel="stylesheet" href="./style.css?v=2025-04-10-v3" />
-    <script type="module" src="./main.js?v=2025-04-10-v3"></script>
+    <script type="module" src="./main.js?v=2025-04-10-v4"></script>
     <title>Tax sheets</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
@@ -41,11 +41,11 @@
         </label>
       </fieldset>
       <br />
-      <label>
+      <label title="Include income from work, investment (dividend, interest), and short-term capital gain">
         <span>Expected annual income</span>
         <input name="expectedAnnualIncome" type="number" />
       </label>
-      <label>
+      <label title="Use the standard deduction or esitmate itemized deduction">
         <span>Expected deduction </span>
         <input name="expectedDeduction" type="number" placeholder="" />
         <button title="Apply standard deduction" type="button" data-action="apply-std-deduction">std</button>
@@ -55,7 +55,7 @@
         <input name="expectedTaxableIncome" type="number" readonly />
       </label>
       <br />
-      <label>
+      <label title="Include income from work, investment (dividend, interest), and short-term capital gain">
         Income YTD
         <input name="incomeYtd" type="number" />
       </label>
