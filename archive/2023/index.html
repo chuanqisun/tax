@@ -1,63 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <link rel="stylesheet" href="./style.css?v=1.0.1" />
+    <script type="module" src="./main.js?v=1.0.6"></script>
+    <title>Tax sheets</title>
+  </head>
 
-<head>
-  <link rel="stylesheet" href="./style.css?v=1.0.1">
-  <script type="module" src="./main.js?v=1.0.6"></script>
-  <title>Tax sheets</title>
-</head>
+  <body>
+    <h1>Tax sheets 2023</h1>
 
-<body>
-  <h1>Tax sheets 2023</h1>
+    <h2>Input</h2>
+    <form>
+      <button type="reset">Reset</button>
+      <label>
+        <span>Expected annual income</span>
+        <input name="expectedAnnualIncome" type="number" />
+      </label>
+      <label>
+        Income YTD
+        <input name="incomeYtd" type="number" />
+      </label>
+      <label>
+        Tax withheld YTD
+        <input name="taxWithheldYtd" type="number" />
+      </label>
+      <label>
+        Estimated tax paid YTD
+        <input name="estimatedTaxPaidYtd" type="number" />
+      </label>
+    </form>
 
-  <h2>Input</h2>
-  <form>
-    <button type="reset">Reset</button>
-    <label>
-      <span>Expected annual income</span>
-      <input name="expectedAnnualIncome" type="number" />
-    </label>
-    <label>
-      Income YTD
-      <input name="incomeYtd" type="number" />
-    </label>
-    <label>
-      Tax withheld YTD
-      <input name="taxWithheldYtd" type="number" />
-    </label>
-    <label>
-      Estimated tax paid YTD
-      <input name="estimatedTaxPaidYtd" type="number" />
-    </label>
-  </form>
+    <h2>Effective rate</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Rate</th>
+          <th>Min</th>
+          <th>Max</th>
+          <th>Taxable</th>
+          <th>Tax</th>
+        </tr>
+      </thead>
+      <tbody id="worksheet"></tbody>
+    </table>
 
-  <h2>Effective rate</h2>
-  <table>
-    <thead>
-      <tr>
-        <th>Rate</th>
-        <th>Min</th>
-        <th>Max</th>
-        <th>Taxable</th>
-        <th>Tax</th>
-      </tr>
-    </thead>
-    <tbody id="worksheet">
-    </tbody>
-  </table>
+    <h2>Year-to-date balance</h2>
+    <table>
+      <tbody id="balance"></tbody>
+    </table>
 
-  <h2>Year-to-date balance</h2>
-  <table>
-    <tbody id="balance">
-    </tbody>
-  </table>
-
-  <footer>
-    <h2>Other years</h2>
-    <ul>
-      <li>
-        <a href="/index.html">Current year</a>
-      </li>
-    </ul>
-  </footer>
-</body>
+    <footer>
+      <h2>Other years</h2>
+      <ul>
+        <li>
+          <a href="../../">Current year</a>
+        </li>
+      </ul>
+    </footer>
+  </body>
+</html>
