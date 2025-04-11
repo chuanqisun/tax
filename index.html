@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <link rel="stylesheet" href="./style.css?v=2025-04-10-v3" />
-    <script type="module" src="./main.js?v=2025-04-10-v2"></script>
+    <script type="module" src="./main.js?v=2025-04-10-v3"></script>
     <title>Tax sheets</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
@@ -20,6 +20,7 @@
     <h2>Input</h2>
     <form>
       <button type="reset">Reset</button>
+      <br />
       <fieldset>
         <legend>Filing status</legend>
         <label>
@@ -39,6 +40,7 @@
           Head of household
         </label>
       </fieldset>
+      <br />
       <label>
         <span>Expected annual income</span>
         <input name="expectedAnnualIncome" type="number" />
@@ -46,15 +48,24 @@
       <label>
         <span>Expected deduction </span>
         <input name="expectedDeduction" type="number" placeholder="" />
-        <button title="Apply standard deduction" type="button" data-action="apply-std-deduction">Std</button>
+        <button title="Apply standard deduction" type="button" data-action="apply-std-deduction">std</button>
       </label>
       <label>
         <span>Expected taxable income</span>
         <input name="expectedTaxableIncome" type="number" readonly />
       </label>
+      <br />
       <label>
         Income YTD
         <input name="incomeYtd" type="number" />
+      </label>
+      <label>
+        Short term capital gains YTD
+        <input name="shortTermCapitalGainsYtd" type="number" />
+      </label>
+      <label>
+        Long term capital gains YTD
+        <input name="longTermCapitalGainsYtd" type="number" />
       </label>
       <label>
         Tax withheld YTD
@@ -66,6 +77,8 @@
       </label>
     </form>
 
+    <br />
+    <br />
     <h2>Effective rate</h2>
     <table>
       <thead>
@@ -77,14 +90,31 @@
           <th>Tax</th>
         </tr>
       </thead>
-      <tbody id="worksheet"></tbody>
+      <tbody id="effective-rate-worksheet"></tbody>
     </table>
 
+    <br />
+    <h2>Long term capital gain tax</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Rate</th>
+          <th>Min</th>
+          <th>Max</th>
+          <th>Taxable</th>
+          <th>Tax</th>
+        </tr>
+      </thead>
+      <tbody id="long-term-capital-gain-tax-worksheet"></tbody>
+    </table>
+
+    <br />
     <h2>Year-to-date balance</h2>
     <table>
       <tbody id="balance"></tbody>
     </table>
 
+    <br />
     <footer>
       <h2>Other years</h2>
       <ul>
@@ -95,11 +125,12 @@
           <a href="./archive/2024/">Previous year</a>
         </li>
       </ul>
+      <br />
       <h2>Disclaimer</h2>
       <p>
-        This is a hobby project and may contain calculation errors. Please consult <a href="https://www.irs.gov" target="_blank">IRS official website</a> and
-        tax professionals before filing. The project <a href="https://github.com/chuanqisun/tax" target="_blank">source code</a> is offered under the MIT
-        license.
+        Your data does not leave the browser. This is a hobby project and may contain calculation errors. Please consult
+        <a href="https://www.irs.gov" target="_blank">IRS official website</a> and tax professionals before filing. The
+        <a href="https://github.com/chuanqisun/tax" target="_blank">source code</a> is offered under the MIT license.
       </p>
     </footer>
   </body>

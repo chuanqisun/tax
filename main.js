@@ -153,6 +153,8 @@ function calc() {
   const expectedAnnualIncome = coerceNaNTo(0, Math.max(0, rootForm.querySelector(`input[name="expectedAnnualIncome"]`).valueAsNumber));
   const expectedDeduction = coerceNaNTo(0, Math.max(0, rootForm.querySelector(`input[name="expectedDeduction"]`).valueAsNumber));
   const incomeYtd = coerceNaNTo(0, Math.max(0, rootForm.querySelector(`input[name="incomeYtd"]`).valueAsNumber));
+  const shortTermCapitalGainsYtd = coerceNaNTo(0, Math.max(0, rootForm.querySelector(`input[name="shortTermCapitalGainsYtd"]`).valueAsNumber));
+  const longTermCapitalGainsYtd = coerceNaNTo(0, Math.max(0, rootForm.querySelector(`input[name="longTermCapitalGainsYtd"]`).valueAsNumber));
   const taxWithheldYtd = coerceNaNTo(0, Math.max(0, rootForm.querySelector(`input[name="taxWithheldYtd"]`).valueAsNumber));
   const estimatedTaxPaidYtd = coerceNaNTo(0, Math.max(0, rootForm.querySelector(`input[name="estimatedTaxPaidYtd"]`).valueAsNumber));
   const expectedTaxableIncome = Math.max(0, expectedAnnualIncome - expectedDeduction);
@@ -178,19 +180,44 @@ function calc() {
     })
     .slice(1);
 
-  const total = filledBrackets.reduce((acc, { tax }) => acc + tax, 0);
-  const effectiveTaxRate = coerceNaNTo(0, total / expectedTaxableIncome);
-  const summary = { expectedIncome: expectedTaxableIncome, total, effectiveTaxRate };
+  const filledLongTermCapitalGainBrackets = prepareBrackets(schedule.longTermCapitalGainBrackets).map(({ rate, min, max }) => {
+    /** Unlike income tax being progressive, long term cap gain is applicable to only a single bracket */
+    const applicable = longTermCapitalGainsYtd > min && longTermCapitalGainsYtd <= max;
+    const taxable = applicable ? longTermCapitalGainsYtd : 0;
+    const tax = rate * taxable;
+    return {
+      rate,
+      min,
+      max,
+      taxable,
+      tax,
+      applicable,
+    };
+  });
 
-  document.querySelector("tbody#worksheet").innerHTML = renderWorksheet(filledBrackets, summary);
+  const totalIncomeTax = filledBrackets.reduce((acc, { tax }) => acc + tax, 0);
+  const effectiveTaxRate = coerceNaNTo(0, totalIncomeTax / expectedTaxableIncome);
+  const summary = { expectedIncome: expectedTaxableIncome, total: totalIncomeTax, effectiveTaxRate };
 
-  const taxExpectedYtd = incomeYtd * effectiveTaxRate;
-  const balanceYtd = taxExpectedYtd - taxWithheldYtd - estimatedTaxPaidYtd;
+  const longTermCapitalGainTax = filledLongTermCapitalGainBrackets.reduce((acc, { tax }) => acc + tax, 0);
+
+  document.querySelector("tbody#effective-rate-worksheet").innerHTML = renderEffectiveTaxRateWorksheet(filledBrackets, summary);
+  document.querySelector("tbody#long-term-capital-gain-tax-worksheet").innerHTML = renderLongTermCapitalGainWorksheet(filledLongTermCapitalGainBrackets);
+
+  const totalTaxableIncomeYtd = incomeYtd + shortTermCapitalGainsYtd;
+  const incomeTaxExpectedYtd = totalTaxableIncomeYtd * effectiveTaxRate;
+  const totalTax = incomeTaxExpectedYtd + longTermCapitalGainTax;
+  const balanceYtd = totalTax - taxWithheldYtd - estimatedTaxPaidYtd;
 
   const balanceInput = {
     incomeYtd,
+    shortTermCapitalGainsYtd,
+    longTermCapitalGainsYtd,
+    totalTaxableIncomeYtd,
     effectiveTaxRate,
-    taxExpectedYtd,
+    incomeTaxExpectedYtd,
+    longTermCapitalGainTax,
+    totalTax,
     taxWithheldYtd,
     estimatedTaxPaidYtd,
     balanceYtd,
@@ -214,7 +241,7 @@ function renderInputFormValues(expectedTaxableIncome, standardDeduction) {
   rootForm.querySelector(`input[name="expectedDeduction"]`).placeholder = standardDeduction;
 }
 
-function renderWorksheet(filledBrackets, summary) {
+function renderEffectiveTaxRateWorksheet(filledBrackets, summary) {
   return [
     ...filledBrackets.map(
       ({ rate, min, max, taxable, tax, applicable }) =>
@@ -243,11 +270,40 @@ function renderWorksheet(filledBrackets, summary) {
   ].join("\n");
 }
 
+function renderLongTermCapitalGainWorksheet(filledBrackets) {
+  return [
+    ...filledBrackets.map(
+      ({ rate, min, max, taxable, tax, applicable }) =>
+        `
+    <tr data-applicable=${applicable}>
+      <td>${(rate * 100).toFixed(0)}%</td>
+      <td>${min}</td>
+      <td>${max}</td>
+      <td>${taxable.toFixed(2)}</td>
+      <td>${tax.toFixed(2)}</td>
+    </tr>
+    `
+    ),
+  ].join("\n");
+}
+
 function renderBalance(input) {
   return `
+
   <tr>
     <th>Income</th>
     <td>${input.incomeYtd.toFixed(2)}</td>
+  </tr>
+  <tr>
+    <th>Short-term capital gains</th>
+    <td>${input.shortTermCapitalGainsYtd.toFixed(2)}</td>
+  </tr>
+  <tr>
+    <th colspan="2"><hr></th>
+  </tr>
+  <tr>
+    <th>Total taxable</th>
+    <td>${input.totalTaxableIncomeYtd.toFixed(2)}</td>
   </tr>
   <tr>
     <th>Effective tax rate</th>
@@ -257,8 +313,19 @@ function renderBalance(input) {
     <th colspan="2"><hr></th>
   </tr>
   <tr>
-    <th>Tax</th>
-    <td>${input.taxExpectedYtd.toFixed(2)}</td>
+    <th>Income tax</th>
+    <td>${input.incomeTaxExpectedYtd.toFixed(2)}</td>
+  </tr>
+  <tr>
+    <th>Long-term capital gain tax</th>
+    <td>${input.longTermCapitalGainTax.toFixed(2)}</td>
+  </tr>
+  <tr>
+    <th colspan="2"><hr></th>
+  </tr>
+  <tr>
+    <th>Total tax</th>
+    <td>${input.totalTax.toFixed(2)}</td>
   </tr>
   <tr>
     <th>Withheld</th>
