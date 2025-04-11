@@ -1,4 +1,4 @@
-const year = 2024;
+const year = 2025;
 const brackets = [
   { rate: 0, max: 0 },
   { rate: 0.1, max: 11_925 },
@@ -9,9 +9,8 @@ const brackets = [
   { rate: 0.35, max: 626_350 },
   { rate: 0.37, max: Infinity },
 ];
-
+const standardDeduction = 14_600;
 const storageKey = `params-${year}`;
-
 const rootForm = document.querySelector("form");
 
 restoreParams();
@@ -39,6 +38,17 @@ function main() {
     rootForm.reset();
     calc();
   });
+
+  rootForm.addEventListener("click", (e) => {
+    const action = e.target?.closest("[data-action]")?.getAttribute("data-action");
+    switch (action) {
+      case "apply-std-deduction": {
+        rootForm.querySelector(`input[name="expectedDeduction"]`).value = standardDeduction;
+        calc();
+        break;
+      }
+    }
+  });
 }
 
 function restoreParams() {
@@ -55,14 +65,18 @@ function restoreParams() {
 
 function calc() {
   const expectedAnnualIncome = coerceNaNTo(0, Math.max(0, rootForm.querySelector(`input[name="expectedAnnualIncome"]`).valueAsNumber));
+  const expectedDeduction = coerceNaNTo(0, Math.max(0, rootForm.querySelector(`input[name="expectedDeduction"]`).valueAsNumber));
   const incomeYtd = coerceNaNTo(0, Math.max(0, rootForm.querySelector(`input[name="incomeYtd"]`).valueAsNumber));
   const taxWithheldYtd = coerceNaNTo(0, Math.max(0, rootForm.querySelector(`input[name="taxWithheldYtd"]`).valueAsNumber));
   const estimatedTaxPaidYtd = coerceNaNTo(0, Math.max(0, rootForm.querySelector(`input[name="estimatedTaxPaidYtd"]`).valueAsNumber));
+  const expectedTaxableIncome = Math.max(0, expectedAnnualIncome - expectedDeduction);
+
+  renderExpectedIncome(expectedTaxableIncome);
 
   const filledBrackets = prepareBrackets(brackets)
     .map(({ rate, min, max }) => {
-      const applicable = expectedAnnualIncome > min;
-      const taxable = Math.min(max, Math.max(expectedAnnualIncome, min)) - min;
+      const applicable = expectedTaxableIncome > min;
+      const taxable = Math.min(max, Math.max(expectedTaxableIncome, min)) - min;
 
       return {
         rate,
@@ -76,8 +90,8 @@ function calc() {
     .slice(1);
 
   const total = filledBrackets.reduce((acc, { tax }) => acc + tax, 0);
-  const effectiveTaxRate = coerceNaNTo(0, total / expectedAnnualIncome);
-  const summary = { expectedIncome: expectedAnnualIncome, total, effectiveTaxRate };
+  const effectiveTaxRate = coerceNaNTo(0, total / expectedTaxableIncome);
+  const summary = { expectedIncome: expectedTaxableIncome, total, effectiveTaxRate };
 
   document.querySelector("tbody#worksheet").innerHTML = renderWorksheet(filledBrackets, summary);
 
@@ -104,6 +118,10 @@ function prepareBrackets(brackets = []) {
       min,
     };
   });
+}
+
+function renderExpectedIncome(expectedTaxableIncome) {
+  rootForm.querySelector(`input[name="expectedTaxableIncome"]`).value = expectedTaxableIncome;
 }
 
 function renderWorksheet(filledBrackets, summary) {

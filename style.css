@@ -8,7 +8,7 @@ table {
 
 form {
   display: inline-grid;
-  grid-template-columns: auto auto;
+  grid-template-columns: auto auto auto;
   gap: 8px;
 
   label {
@@ -16,6 +16,18 @@ form {
     display: grid;
     grid-column: 1 / -1;
     grid-template-columns: subgrid;
+  }
+
+  input {
+    grid-column: span 2;
+  }
+
+  input:has(+ button) {
+    grid-column: span 1;
+  }
+
+  label button {
+    grid-column: span 1;
   }
 
   button {
