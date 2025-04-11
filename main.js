@@ -57,6 +57,7 @@ const schedules = {
 const storageKey = `params-${year}`;
 const rootForm = document.querySelector("form");
 
+renderColorScheme();
 restoreParams();
 calc();
 
@@ -95,6 +96,13 @@ function main() {
       }
     }
   });
+}
+
+function renderColorScheme() {
+  const preferred = new URLSearchParams(window.location.search).get("color-scheme");
+  if (preferred) {
+    document.body.setAttribute("data-color-scheme", preferred);
+  }
 }
 
 function restoreParams() {

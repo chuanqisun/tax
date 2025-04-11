@@ -2,6 +2,13 @@
   color-scheme: dark light;
 }
 
+html:has(body[data-color-scheme="dark"]) {
+  color-scheme: dark;
+}
+html:has(body[data-color-scheme="light"]) {
+  color-scheme: light;
+}
+
 body {
   font-family: monospace;
 }
