@@ -29,7 +29,7 @@ const schedules = {
       { rate: 0.35, max: 751_600 },
       { rate: 0.37, max: Infinity },
     ],
-    longTermCapitalGainRates: [
+    longTermCapitalGainBrackets: [
       { rate: 0, max: 94_050 },
       { rate: 0.15, max: 583_750 },
       { rate: 0.2, max: Infinity },
@@ -47,7 +47,7 @@ const schedules = {
       { rate: 0.35, max: 375_800 },
       { rate: 0.37, max: Infinity },
     ],
-    longTermCapitalGainRates: [
+    longTermCapitalGainBrackets: [
       { rate: 0, max: 47_025 },
       { rate: 0.15, max: 291_850 },
       { rate: 0.2, max: Infinity },
@@ -65,7 +65,7 @@ const schedules = {
       { rate: 0.35, max: 626_350 },
       { rate: 0.37, max: Infinity },
     ],
-    longTermCapitalGainRates: [
+    longTermCapitalGainBrackets: [
       { rate: 0, max: 63_000 },
       { rate: 0.15, max: 551_350 },
       { rate: 0.2, max: Infinity },
